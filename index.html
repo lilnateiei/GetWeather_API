@@ -13,7 +13,7 @@
 </head>
 <body class="font-kanit flex items-center justify-center min-h-screen bg-gradient-to-br from-sky-400 via-cyan-700 to-orange-500">
   
-  <div class="w-full max-w-xl h-175 p-8 m-4 rounded-lg shadow-xl bg-white">
+  <div class="w-full max-w-xl h-175 p-8 m-4 rounded-lg shadow-xl bg-white ">
     <h1 class="text-center font-bold text-2xl">Get Your Weather</h1>
     <h4 class="text-center font-semibold mt-4">Your City have a Bad Weather Or Good?</h4>
 
@@ -27,9 +27,10 @@
     <div class="bg-red-500 p-2 text-lg max-w-xs ml-18 font-medium rounded-lg text-white hidden" id="error" >
       
     </div>
-
-    <div class="flex flex-row justify-center mr-10">
+    
+    <div class="flex flex-row justify-center mr-10 relative">
       <input type="text" id="input-city" class="mt-4 border border-2 border-gray-300 p-3 w-full max-w-xs rounded-md focus:ring ring-offset-4 ring-blue-300 focus:outline focus:outline-3 focus:outline-blue-300" placeholder="Where are you now . . .?">
+      <ul class="border bg-white mt-1 rounded shadow max-h-30 overflow-y-auto hidden absolute top-full justify-center w-full max-w-xs z-10" id="suggest"></ul>
     </div>
 
     <div class="flex justify-center mr-10">
