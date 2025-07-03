@@ -1,6 +1,18 @@
 const url = "http://api.weatherapi.com/v1"
 const API_KEY = "80b9d2524c2c48c894385831252606"
 
+const inputcityDOM = document.getElementById("input-city");
+    const cityDOM = document.getElementById("city")
+    const tempDOM = document.getElementById("temp");
+    const weatherDOM = document.getElementById("weather");
+    const humidityDOM = document.getElementById("humidity")
+    const localtimeDOM = document.getElementById("localtime")
+    const uvDOM = document.getElementById("uv")
+    const LoadingDOM  = document.getElementById("loading")
+    const countryDOM = document.getElementById("country")
+    const errorDOM = document.getElementById("error")
+    const suggestDOM = document.getElementById("suggest")
+    
 
  
 
@@ -53,26 +65,20 @@ async function getWeather() {
     }
 
 
-    const inputcityDOM = document.getElementById("input-city");
-    const cityDOM = document.getElementById("city")
-    const tempDOM = document.getElementById("temp");
-    const weatherDOM = document.getElementById("weather");
-    const humidityDOM = document.getElementById("humidity")
-    const localtimeDOM = document.getElementById("localtime")
-    const uvDOM = document.getElementById("uv")
-    const LoadingDOM  = document.getElementById("loading")
-    const countryDOM = document.getElementById("country")
-    const errorDOM = document.getElementById("error")
     
     
 
     const cityName = inputcityDOM.value.trim();
     
-    const API_URL = `https://api.weatherapi.com/v1/current.json?key=${API_KEY}&q=${encodeURIComponent(cityName)}&aqi=no`
+    const API_URL = `https://api.weatherapi.com/v1/current.json?key=80b9d2524c2c48c894385831252606&q=${encodeURIComponent(cityName)}&aqi=no`
 
     console.log("🌍 API URL:", API_URL)
 
+     
+
+   
     try{
+
         LoadingDOM.textContent = "Loading . . . "
         const response = await fetch(API_URL);
 
@@ -97,6 +103,8 @@ async function getWeather() {
         localtimeDOM.textContent = `Localtime: ${data.location.localtime}`
     
 
+        
+       
        
       
 
@@ -106,5 +114,76 @@ async function getWeather() {
    console.log("Error", error)
 }
 
+
 }
+
+let debounceTimeout = null;
+
+inputcityDOM.addEventListener("input", (e ) => {
+  clearTimeout(debounceTimeout);
+  debounceTimeout = setTimeout(() => {
+    setupSuggest(e);
+  }, 300); 
+});
+
+async function setupSuggest(e) {
+   
+  const query = e.target.value.trim().toLowerCase()
+
+  
+  
+  if(query.length < 2) {
+      suggestDOM.classList.add('hidden')
+      return
+    }
+    
+    try {
+        const response = await fetch(`https://api.weatherapi.com/v1/search.json?key=${API_KEY}&q=${encodeURIComponent(query)}`)
+        const data = await response.json()
+        
+        const filtered = data.filter(item =>
+          item.name.toLowerCase().includes(query) ||
+          item.country.toLowerCase().includes(query)
+        )
+        
+    suggestDOM.innerHTML = ''
+
+    if(!filtered.length) {
+        suggestDOM.classList.add('hidden')
+        return
+    } 
+
+    filtered.forEach(city => {
+        const li = document.createElement("li")
+        li.textContent = `${city.name}, ${city.country}`
+        li.classList.add("p-2", "cursor-pointer", "hover:bg-gray-200");
+
+        li.addEventListener('click', () => {
+            inputcityDOM.value = city.name
+            suggestDOM.innerHTML = ""
+            suggestDOM.classList.add('hidden')
+             getWeather(); 
+        })
+
+        suggestDOM.appendChild(li)
+    });
+
+    suggestDOM.classList.remove("hidden")
+
+    
+  }catch (error) {
+    ShowError(errorDOM, "เกิดข้อผิดพลาดในการโหลด suggest");
+    console.log('error',error)
+}
+
+} 
+
+    
+
+ window.onload =  async() => {
+console.log('loading')
+
+  }
+
+
 
